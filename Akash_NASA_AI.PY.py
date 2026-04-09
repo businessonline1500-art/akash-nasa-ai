@@ -1,126 +1,116 @@
 import streamlit as st
-import random
-import datetime
-import os
-import time
+import pandas as pd
+from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
 
-# ১. মাস্টার ডাটাবেস ও ট্র্যাকিং ফাইল
-TRACKER_FILE = "akash_master_logs.txt"
+# --- CONFIGURATION & NASA UI ---
+st.set_page_config(page_title="NASA MASTER CORE - V33", layout="wide")
 
-def log_all_data(name, email, ip, device, amount, trxid):
-    now = datetime.datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
-    log_entry = f"🚀 [SYSTEM ACCESS] {now} | Name: {name} | Email: {email} | IP: {ip} | Device: {device} | Amount: ৳{amount} | TrxID: {trxid}"
-    with open(TRACKER_FILE, "a", encoding="utf-8") as f:
-        f.write(log_entry + "\n")
-
-# ২. পেজ সেটআপ ও প্রফেশনাল নাসা নিয়ন থিম
-st.set_page_config(page_title="NASA SUPREME SERVER | AKASH", page_icon="📡", layout="wide")
-
+# Custom CSS for Dark Neon NASA Look
 st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap');
-    .stApp { background: radial-gradient(circle at center, #00122e 0%, #000000 100%) !important; color: #ffffff; font-family: 'Share Tech Mono', monospace; }
-    .main-title { color: #00f2ff; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 45px; text-shadow: 0 0 35px #00f2ff, 0 0 10px #ffffff; margin-bottom: 25px; }
-    .logo-container { text-align: center; margin-top: -30px; margin-bottom: 20px; }
-    .payment-box { border: 2px solid #e2136e; padding: 20px; border-radius: 15px; background: rgba(226, 19, 110, 0.12); text-align: center; margin-bottom: 15px; box-shadow: 0 0 15px rgba(226, 19, 110, 0.4); }
-    .hacker-alert { background: #ff0000; color: #fff; padding: 25px; border-radius: 12px; text-align: center; font-family: 'Orbitron', sans-serif; animation: blink 0.4s infinite; border: 3px solid #ffffff; }
-    @keyframes blink { 50% { opacity: 0.3; } }
-</style>
-""", unsafe_allow_html=True)
+    <style>
+    .main { background-color: #000000; color: #00FF00; }
+    .stButton>button { background-color: #00FF00; color: black; border-radius: 10px; font-weight: bold; }
+    .header { color: #00eaff; text-align: center; font-family: 'Courier New'; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# ৩. সেশন এবং সিকিউরিটি কনফিগারেশন
-if 'step' not in st.session_state: st.session_state.step = "login"
-if 'is_admin' not in st.session_state: st.session_state.is_admin = False
-if 'hacker' not in st.session_state: st.session_state.hacker = False
+st.markdown("<h1 class='header'>🚀 NASA OFFICIAL GATEWAY - SUPREME V33</h1>", unsafe_allow_html=True)
+st.image("https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg", width=100)
 
-# তোমার গোপন পাসওয়ার্ড ও নাম্বার (আকাশ স্পেশাল)
-OWNER_KEY = "Akash@Owner#2026"   
-VIP_CODE = "BAP-VIP-500"         
-BKASH_NAGAD = "01967840830"
+# --- SYSTEM SETTINGS ---
+OWNER_PASS = "Akash@Owner#2026"
+VIP_PROMO = "BAP-VIP-500"
+AKASH_BKASH = "01967840830"
+MY_GMAIL = "your-email@gmail.com" # এখানে তোমার জিমেইল দিও
+GMAIL_APP_PASS = "your-app-password" # জিমেইলের অ্যাপ পাসওয়ার্ড
 
-# ৪. হ্যাকার প্রোটেকশন
-if st.session_state.hacker:
-    st.markdown('<div class="hacker-alert">🚨 SYSTEM BREACH DETECTED!<br>IP & DEVICE LOGGED BY CYBER DIVISION.</div>', unsafe_allow_html=True)
-    if st.button("I APOLOGIZE & EXIT"): 
-        st.session_state.hacker = False
-        st.rerun()
-    st.stop()
+# --- SESSION STATE FOR DATABASE ---
+if 'logs' not in st.session_state:
+    st.session_state.logs = []
 
-# ৫. এন্ট্রি গেটওয়ে
-if st.session_state.step == "login":
-    st.markdown(f"""<div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="160"></div>""", unsafe_allow_html=True)
-    st.markdown('<h1 class="main-title">NASA MASTER CORE V33</h1>', unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        # ওনার লগইন সেকশন
-        st.markdown("<h3 style='color:#00f2ff; text-align:center;'>🛡️ Owner Master Access</h3>", unsafe_allow_html=True)
-        owner_pass = st.text_input("Enter Private Key:", type="password", placeholder="আপনার গোপন কোড দিন")
-        if st.button("Enter Admin Core"):
-            if owner_pass == OWNER_KEY:
-                st.session_state.is_admin = True
-                st.session_state.step = "dashboard"
-                st.rerun()
-            elif owner_pass != "": st.warning("Access Denied!")
-
-        st.markdown("<hr style='border-color:#00f2ff;'>", unsafe_allow_html=True)
+# --- FUNCTIONS ---
+def send_email_alert(data):
+    try:
+        msg = MIMEText(f"নতুন পেমেন্ট এসেছে!\n\nতথ্য: {data}")
+        msg['Subject'] = 'Akash NASA Server - New Payment Alert'
+        msg['From'] = MY_GMAIL
+        msg['To'] = MY_GMAIL
         
-        # কাস্টমার জিমেইল ও পেমেন্ট গেটওয়ে
-        st.markdown("<h3 style='text-align:center;'>💳 Customer Payment Gateway</h3>", unsafe_allow_html=True)
-        v_input = st.text_input("🎁 VIP Discount Code (Optional):")
-        is_vip_active = v_input.strip() == VIP_CODE
-        
-        min_p, max_p = (500, 2000) if is_vip_active else (3000, 10000)
-        if is_vip_active: st.success("✅ VIP DISCOUNT ACTIVE!")
-        
-        amt = st.slider("Select Price:", min_p, max_p, min_p, step=500)
-        st.markdown(f'<div class="payment-box">Send Money: <b>৳{amt}</b> To: <b>{BKASH_NAGAD}</b></div>', unsafe_allow_html=True)
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(MY_GMAIL, GMAIL_APP_PASS)
+        server.send_message(msg)
+        server.quit()
+    except:
+        pass # ইমেইল সেটআপ না থাকলেও যেন ক্র্যাশ না করে
 
-        with st.form("payment_form"):
-            u_name = st.text_input("Full Name")
-            u_email = st.text_input("Gmail Address")
-            u_trx = st.text_input("TrxID")
-            
-            if st.form_submit_button("Verify & Unlock Server"):
-                if "@gmail.com" not in u_email.lower():
-                    st.error("ভুল ইমেইল! অবশ্যই @gmail.com থাকতে হবে।")
-                elif any(x in u_trx.lower() for x in ["hack", "bypass"]):
-                    st.session_state.hacker = True
-                    st.rerun()
-                elif len(u_trx) >= 8 and u_name != "":
-                    # ২১ কোটি পাওয়ারের ইউনিভার্সাল ডিভাইস ডিটেক্টর (Xiaomi, Vivo, Oppo, Realme, etc.)
-                    ip = f"103.{random.randint(10,99)}.{random.randint(100,255)}." + str(random.randint(1,255))
-                    
-                    # সব ব্র্যান্ডের মোবাইলের লিস্ট এড করা হয়েছে
-                    all_brands = ["Xiaomi Redmi", "Vivo V30", "Oppo Reno", "Realme GT", "Infinix Note", "Tecno Camon", "Motorola Edge", "Huawei P60", "Nokia G42"]
-                    detected_device = random.choice(all_brands) + f" (Mobile/Tab)"
-                    
-                    log_all_data(u_name, u_email, ip, detected_device, amt, u_trx)
-                    st.session_state.user_info = {"name": u_name, "email": u_email}
-                    st.session_state.step = "dashboard"
-                    st.rerun()
-                else:
-                    st.error("সব তথ্য পূরণ করুন।")
+# --- MAIN APP INTERFACE ---
+tab1, tab2 = st.tabs(["💎 CUSTOMER GATEWAY", "🔐 AKASH ADMIN PANEL"])
 
-# ৬. সুপ্রিম ড্যাশবোর্ড
-elif st.session_state.step == "dashboard":
-    st.markdown(f'<h1 class="main-title">SYSTEM CORE ACTIVE: {st.session_state.is_admin and "AKASH OWNER" or st.session_state.user_info["name"]}</h1>', unsafe_allow_html=True)
+with tab1:
+    st.info("⚡ ১৮ কোটি পাওয়ারের মাস্টার সার্ভারে স্বাগতম")
     
-    if st.session_state.is_admin:
-        st.info("🚀 POWER LEVEL: 210,000,000X | SUPREME ADMIN ACTIVE")
-        tab1, tab2 = st.tabs(["🕵️‍♂️ Live Sales Log", "⚙️ Server Control"])
-        with tab1:
-            if os.path.exists(TRACKER_FILE):
-                with open(TRACKER_FILE, "r", encoding="utf-8") as f:
-                    logs = f.readlines()[::-1]
-                    for log in logs:
-                        st.markdown(f"<p style='color:#00ff88;'>{log}</p>", unsafe_allow_html=True)
-        with tab2:
-            if st.button("Logout"):
-                st.session_state.step = "login"
-                st.session_state.is_admin = False
-                st.rerun()
-    else:
-        st.success(f"Verified Access for {st.session_state.user_info['email']}")
-        st.write("সার্ভার পাওয়ার: ২১ কোটি গুণ | স্ট্যাটাস: এনক্রিপ্টেড কানেকশন")
-        st.chat_input("Enter Command...")
+    with st.form("payment_form"):
+        name = st.text_input("আপনার নাম:")
+        email = st.text_input("জিমেইল এড্রেস (অবশ্যই @gmail.com হতে হবে):")
+        device = st.selectbox("আপনার ডিভাইসের ব্র্যান্ড:", ["iPhone/Samsung", "Xiaomi", "Vivo", "Oppo", "Realme", "Infinix", "Tecno", "Other"])
+        promo = st.text_input("ডিসকাউন্ট প্রমো কোড (থাকলে দিন):")
+        
+        price = 2500
+        if promo == VIP_PROMO:
+            price = 500
+            st.success(f"VIP কোড অ্যাক্টিভ! মূল্য এখন মাত্র {price} টাকা।")
+        
+        st.write(f"💵 পেমেন্ট করুন: **{AKASH_BKASH}** (বিকাশ/নগদ)")
+        trxid = st.text_input("Transaction ID (TrxID) দিন:")
+        
+        submit = st.form_submit_button("SUBMIT PAYMENT")
+        
+        if submit:
+            if "@gmail.com" in email and len(trxid) > 5:
+                entry = {
+                    "Time": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "Name": name,
+                    "Email": email,
+                    "Device": device,
+                    "Price": price,
+                    "TrxID": trxid,
+                    "IP": "Verified"
+                }
+                st.session_state.logs.append(entry)
+                send_email_alert(entry) # ইমেইলে ব্যাকআপ পাঠানো
+                st.success("পেমেন্ট সফলভাবে জমা হয়েছে! আকাশ আপনার সাথে যোগাযোগ করবে।")
+            else:
+                st.error("ভুল তথ্য দিয়েছেন! জিমেইল এবং TrxID চেক করুন।")
+
+with tab2:
+    st.subheader("ADMIN LOGIN")
+    access_code = st.text_input("Enter Owner Key:", type="password")
+    
+    if access_code == OWNER_PASS:
+        st.success("✅ SYSTEM CORE ACTIVE: AKASH OWNER")
+        
+        if st.session_state.logs:
+            df = pd.DataFrame(st.session_state.logs)
+            st.table(df)
+            
+            # --- PENDRIVE BACKUP SECTION ---
+            st.markdown("### 📥 PENDRIVE BACKUP SECTION")
+            csv = df.to_csv(index=False).encode('utf-8')
+            
+            st.download_button(
+                label="কাস্টমার ডাটা ডাউনলোড করুন (পেনড্রাইভে রাখার জন্য)",
+                data=csv,
+                file_name=f"akash_backup_{datetime.now().strftime('%d_%m')}.csv",
+                mime='text/csv',
+            )
+            st.info("উপরে ডাউনলোড বাটনে ক্লিক করে ফাইলটি সরাসরি তোমার পেনড্রাইভে সেভ করে রাখো।")
+        else:
+            st.warning("এখনো কোনো পেমেন্ট ডাটা আসেনি।")
+    elif access_code != "":
+        st.error("❌ ভুল পাসওয়ার্ড! হ্যাকিং অ্যালার্ট চালু হচ্ছে...")
+
+# --- FOOTER ---
+st.markdown("---")
+st.caption("Powered by Akash NASA AI Master Core © 2026")
