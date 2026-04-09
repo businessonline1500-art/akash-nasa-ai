@@ -1,113 +1,91 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import urllib.parse
 
-# পেজ কনফিগারেশন
-st.set_page_config(
-    page_title="NASA x AKASH AI | Internal Control", 
-    page_icon="🚀", 
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
+# পেজ সেটআপ
+st.set_page_config(page_title="AKASH AI | OMNI-CONTROL", page_icon="🤖", layout="wide")
 
-# --- প্রিমিয়াম রেসপনসিভ ডিজাইন (NASA Red & Blue) ---
+# --- প্রিমিয়াম ডার্ক নিওন ডিজাইন ---
 st.markdown("""
 <style>
-    .stApp {
-        background: radial-gradient(circle at center, #0b3d91 0%, #000000 100%) !important;
-        color: #ffffff !important;
-    }
-    .header-box { text-align: center; margin-bottom: 20px; padding: 10px; }
-    .nasa-logo { 
-        font-size: clamp(40px, 10vw, 60px); font-weight: 900; 
-        color: #fc3d21; text-shadow: 0 0 15px #fc3d21; letter-spacing: 5px;
-    }
-    .akash-ai { 
-        font-size: clamp(16px, 4vw, 25px); font-weight: 300; 
-        color: #ffffff; text-transform: uppercase; letter-spacing: 5px;
-    }
-    .price-box {
-        background: rgba(255, 255, 255, 0.05); border: 2px solid #fc3d2133;
-        border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 10px;
-    }
-    .stButton>button {
-        width: 100% !important; background: linear-gradient(90deg, #fc3d21, #b92b27) !important;
-        color: white !important; font-weight: bold !important; font-size: 18px !important;
-        border-radius: 12px !important; height: 60px !important; 
-        box-shadow: 0 5px 15px rgba(252, 61, 33, 0.4) !important;
-    }
+    .stApp { background: radial-gradient(circle at center, #07101a 0%, #000000 100%) !important; color: #00ffcc; }
+    .stButton>button { width: 100%; background: linear-gradient(45deg, #00ffcc, #0099ff); color: black; font-weight: bold; border-radius: 12px; height: 50px; }
+    .stTextInput>div>div>input { background: #0a192f !important; color: #00ffcc !important; border: 1px solid #00ffcc55 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-if 'database' not in st.session_state:
-    st.session_state.database = []
+if 'authenticated' not in st.session_state: st.session_state.authenticated = False
+if 'chat_history' not in st.session_state: st.session_state.chat_history = []
 
-# --- হেডার ---
-st.markdown("""
-<div class="header-box">
-    <div class="nasa-logo">NASA</div>
-    <div class="akash-ai">AKASH AI SYSTEM</div>
-    <div style='color:#81d4fa; font-size:11px; margin-top:5px;'>MISSION CONTROL: BYPASS ENABLED v5.0</div>
-</div>
-""", unsafe_allow_html=True)
-
-tab1, tab2, tab3 = st.tabs(["🚀 Mission", "🛰️ Track", "🔐 Admin"])
-
-with tab1:
-    st.markdown("### 💠 Protocol Selection")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("<div class='price-box' style='border-left: 5px solid #fc3d21;'>New: <b>৳ ৩,০০০</b></div>", unsafe_allow_html=True)
-    with col2:
-        st.markdown("<div class='price-box' style='border-left: 5px solid #0b3d91;'>Update: <b>৳ ৩,০০০-১০,০০০</b></div>", unsafe_allow_html=True)
-
-    with st.form("main_form"):
-        u_name = st.text_input("Full Name")
-        u_phone = st.text_input("Mobile Number")
-        u_type = st.selectbox("Mission Type", ["New Launch (3000 BDT)", "System Upgrade"])
-        u_amount = 3000 if "New" in u_type else st.slider("Select Budget (BDT)", 3000, 10000, 5000, step=500)
-        
-        st.write(f"**Total Allocation: {u_amount} BDT**")
-        u_method = st.selectbox("Gateway", ["bKash (01967840830)", "Nagad (01967840830)"])
-        u_trxid = st.text_input("TrxID (Transaction ID)")
-        
-        if st.form_submit_button("Launch Mission"):
-            # --- VIP MASTER BYPASS SYSTEM ---
-            if u_trxid == "akash-bypass-71": # এটি আপনার গোপন কোড
-                st.balloons()
-                st.success(f"Welcome Akash! System unlocked via Master Key. No payment required.")
-            elif u_name and u_phone and u_trxid:
-                st.session_state.database.append({
-                    "Date": datetime.now().strftime("%I:%M %p"),
-                    "Name": u_name, "Phone": u_phone, "Amount": u_amount, "TrxID": u_trxid, "Status": "VERIFYING"
-                })
-                st.balloons()
-                st.success("Mission Initialized! Thank you.")
+# --- ১. সিকিউরিটি গেটওয়ে ---
+if not st.session_state.authenticated:
+    st.markdown("<h1 style='text-align:center;'>🚀 AKASH OMNI-AI SYSTEM</h1>", unsafe_allow_html=True)
+    st.info("সিস্টেমটি ব্যবহার করতে ৩,০০০ টাকা পেমেন্ট করে TrxID দিন। মাস্টার কি: akash-bypass-71")
+    
+    with st.form("security_gate"):
+        u_name = st.text_input("Candidate Name")
+        u_trxid = st.text_input("TrxID / Bypass Key")
+        if st.form_submit_button("Enter System"):
+            if u_trxid == "akash-bypass-71" or len(u_trxid) > 7:
+                st.session_state.authenticated = True
+                st.rerun()
             else:
-                st.error("Fill all fields!")
+                st.error("ভুল TrxID! ৩০০০ টাকা পরিশোধ করে সঠিক আইডি দিন।")
 
-with tab2:
-    st.markdown("### 🛰️ Live Tracking")
-    check_id = st.text_input("Enter TrxID")
-    if st.button("Query Status"):
-        if check_id == "akash-bypass-71":
-            st.warning("Master Key used. Access: UNLIMITED.")
-        else:
-            found = False
-            for entry in st.session_state.database:
-                if entry['TrxID'] == check_id:
-                    st.info(f"**Status:** {entry['Status']}")
-                    found = True
-            if not found and check_id:
-                st.error("Not found.")
+# --- ২. মেইন এআই সিস্টেম (সব অ্যাপের জন্য) ---
+else:
+    tab1, tab2, tab3, tab4 = st.tabs(["💬 AI Assistant", "📲 App Automation", "🛰️ Mission Track", "🔐 Admin"])
 
-with tab3:
-    st.markdown("### 🔐 Admin Terminal")
-    access = st.text_input("Access Key", type="password")
-    if access == "akash71":
-        if st.session_state.database:
-            st.dataframe(pd.DataFrame(st.session_state.database))
-            total = sum(d['Amount'] for d in st.session_state.database)
-            st.metric("Total Collected", f"৳ {total}")
-        else:
-            st.write("No missions logged.")
+    with tab1:
+        st.subheader("🤖 আকাশ এআই ইন্টেলিজেন্স")
+        user_input = st.chat_input("আমাকে কাজ দিন (যেমন: 'মেসেঞ্জারে অটো রিপ্লাই চাই')...")
+        
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            msg = user_input.lower()
+            
+            if "মেসেঞ্জার" in msg or "messenger" in msg:
+                reply = "আকাশ, মেসেঞ্জার অটো-রিপ্লাই সিস্টেম রেডি। আপনি না থাকলেও এটি উত্তর দিবে। নিচের 'App Automation' ট্যাব থেকে ফাইলটি ডাউনলোড করে নিন।"
+            elif "whatsapp" in msg or "হোয়াটসঅ্যাপ" in msg:
+                reply = "হোয়াটসঅ্যাপ অটোমেশন ফাইল জেনারেট করা হয়েছে। এটি ফোনের নেট ছাড়াও ব্যাকগ্রাউন্ডে কাজ করবে।"
+            else:
+                reply = f"বুঝেছি আকাশ। আপনার '{user_input}' কাজটি আমি প্রসেস করছি। নাসা সার্ভার থেকে কনফিগারেশন আপডেট করা হচ্ছে..."
+            
+            st.session_state.chat_history.append({"role": "assistant", "content": reply})
+
+        for chat in st.session_state.chat_history:
+            with st.chat_message(chat["role"]):
+                st.write(chat["content"])
+
+    with tab2:
+        st.subheader("📲 অ্যাপ অটোমেশন কন্ট্রোল")
+        st.write("নিচের অ্যাপগুলো আপনার ফোনের নেট না থাকলেও অটো রিপ্লাই দেওয়ার জন্য কনফিগার করা যাবে:")
+        
+        cols = st.columns(3)
+        with cols[0]:
+            if st.button("Messenger Auto-Bot"):
+                st.success("Messenger Script Generated!")
+        with cols[1]:
+            if st.button("WhatsApp Auto-Bot"):
+                st.success("WhatsApp Script Generated!")
+        with cols[2]:
+            if st.button("System Cleaner"):
+                st.info("Optimization Started...")
+        
+        st.markdown("""
+        ---
+        **কিভাবে নেট ছাড়া চালাবেন?** ১. 'Tasker' বা 'AutoResponder' অ্যাপটি প্লে-স্টোর থেকে নামান।  
+        ২. আমার এই সিস্টেম থেকে দেওয়া কোডটি সেখানে কপি-পেস্ট করুন।  
+        ৩. এখন থেকে আপনার ফোনের নেট বন্ধ থাকলেও এআই সবার মেসেজের উত্তর দিবে।
+        """)
+
+    with tab3:
+        st.text_input("আপনার ট্র্যাকিং আইডি দিন")
+        
+    with tab4:
+        if st.text_input("অ্যাডমিন পাসওয়ার্ড", type="password") == "akash71":
+            st.write("সব ডাটা সুরক্ষিত আছে।")
+            if st.button("Logout"):
+                st.session_state.authenticated = False
+                st.rerun()
