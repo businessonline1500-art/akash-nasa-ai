@@ -1,191 +1,192 @@
 import streamlit as st
 import time
 
-# ১. পেজ সেটআপ (AKASH NASA AI SERVER PRO v7.0)
-st.set_page_config(page_title="AKASH NASA AI SERVER | EARTH", page_icon="🌎", layout="wide")
+# ১. পেজ সেটআপ (AKASH NASA AI SERVER - MASTER UPDATE)
+st.set_page_config(page_title="AKASH NASA AI SERVER | MASTER", page_icon="🚀", layout="wide")
 
-# ২. পৃথিবী ও মহাকাশ ডিজাইন (Deep Space & Earth Background)
+# ২. প্রিমিয়াম ডীপ স্পেস ও নিওন ডিজাইন (Color & Logo Update)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
     
-    /* মহাকাশ ও পৃথিবীর ব্যাকগ্রাউন্ড */
+    /* মহাকাশের ব্যাকগ্রাউন্ড */
     .stApp { 
-        background: radial-gradient(circle at center, rgba(0, 18, 32, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%), 
-                    url('https://i.ibb.co/L95v1r0/earth-from-space.jpg') no-repeat center center fixed !important; 
-        background-size: cover !important;
+        background: radial-gradient(circle at center, #001d3d 0%, #000000 100%) !important; 
         color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
     }
     
-    /* গ্যালাক্সি টাইটেল */
+    /* লোগো ও টাইটেল কন্টেইনার */
+    .header-container {
+        text-align: center;
+        margin-top: -50px;
+        margin-bottom: 20px;
+    }
+    
+    /* নাসার কক্ষপথ লোগো স্টাইল */
+    .nasa-logo {
+        filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+        margin-bottom: 10px;
+    }
+    
     .main-title { 
-        color: #ff3c00;
-        text-align: center; 
+        color: #ff3c00; 
         font-family: 'Orbitron', sans-serif;
         font-size: 50px; 
         font-weight: 900; 
-        text-shadow: 0 0 20px #ff3c00;
-        margin-bottom: 5px;
+        text-shadow: 0 0 25px rgba(255, 60, 0, 0.7);
+        margin-top: 0;
     }
 
-    /* রোবট এনিমেশন */
-    @keyframes robot-float {
-        0% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-10px) rotate(5deg); }
-        100% { transform: translateY(0px) rotate(0deg); }
+    /* গ্লাস-মরফিজম কার্ড ডিজাইন */
+    .glass-card { 
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(15px);
+        padding: 30px; 
+        border-radius: 25px; 
+        border: 1px solid rgba(255, 60, 0, 0.3); 
+        text-align: center; 
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        margin-bottom: 15px;
     }
     
-    /* পেমেন্ট গ্লাস কার্ড (সবচেয়ে সুন্দর অংশ) */
-    .solar-glass-box { 
-        background: rgba(255, 255, 255, 0.05); 
-        backdrop-filter: blur(25px);
-        padding: 40px; 
-        border-radius: 30px; 
-        border: 2px solid rgba(255, 60, 0, 0.4); 
-        text-align: center; 
-        box-shadow: 0 0 50px rgba(255, 60, 0, 0.3);
-        margin-top: 20px;
+    /* স্লাইডার অ্যামাউন্ট ডিসপ্লে */
+    .price-tag { 
+        font-size: 35px; 
+        color: #00f2ff; 
+        font-weight: bold; 
+        text-shadow: 0 0 15px #00f2ff;
     }
 
-    .stSlider > div > div > div > div {
-        background: linear-gradient(90deg, #ff3c00, #ff8000) !important;
-    }
-
+    /* প্রিমিয়াম বাটন */
     .stButton>button { 
         width: 100%; 
-        background: linear-gradient(135deg, #ff3c00 0%, #ff8000 100%) !important; 
+        background: linear-gradient(135deg, #ff3c00 0%, #7b0000 100%) !important; 
         color: white !important; 
-        border-radius: 20px; 
-        height: 65px; 
+        border-radius: 15px; 
+        height: 60px; 
         font-weight: bold; 
-        font-size: 22px;
+        font-size: 20px;
         border: none;
-        box-shadow: 0 0 25px rgba(255, 60, 0, 0.5);
+        box-shadow: 0 5px 20px rgba(255, 60, 0, 0.4);
+        transition: 0.3s;
+    }
+    .stButton>button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 40px rgba(255, 60, 0, 0.8);
     }
     
-    .stButton>button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 50px rgba(255, 128, 0, 0.7);
-    }
-
-    .amount-display {
-        font-size: 45px;
-        color: #ffcc00;
-        font-weight: 800;
-        text-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+    /* ইনপুট বক্স সুন্দর করা */
+    .stTextInput>div>div>input {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 60, 0, 0.5) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ৩. স্মার্ট ভয়েস ফাংশন
+# ৩. স্মার্ট ভয়েস ফাংশন (বাংলা)
 def speak_text(text):
     if text:
-        js_code = f"<script>var msg = new SpeechSynthesisUtterance('{text}'); msg.lang = 'bn-BD'; window.speechSynthesis.speak(msg);</script>"
+        js_code = f"""
+        <script>
+        var msg = new SpeechSynthesisUtterance('{text}');
+        msg.lang = 'bn-BD';
+        window.speechSynthesis.speak(msg);
+        </script>
+        """
         st.components.v1.html(js_code, height=0)
 
+# সেশন স্টেট (লগইন হ্যান্ডলিং)
 if 'authenticated' not in st.session_state: st.session_state.authenticated = False
 if 'chat_history' not in st.session_state: st.session_state.chat_history = []
 if 'user_name' not in st.session_state: st.session_state.user_name = ""
 
-# ৪. পৃথিবী ও নাসার লোগো পেমেন্ট গেটওয়ে
+# ৪. পেমেন্ট গেটওয়ে ইন্টারফেস (লগইন এর আগে)
 if not st.session_state.authenticated:
-    # নাসার লোগো এবং টাইটেল
+    # মাঝখানে নাসার অরিজিনাল লোগো ও টাইটেল
     st.markdown("""
-    <div style="text-align: center; margin-top: -30px;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="150" style="margin-bottom: 10px;">
+    <div class="header-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" class="nasa-logo" width="180">
         <h1 class="main-title">AKASH NASA AI SERVER</h1>
-        <p style="color: #ffcc00; font-size: 20px; letter-spacing: 5px;">EXPEDITION v7.0 POWER</p>
+        <p style="text-align: center; color: #00f2ff; font-size: 18px; letter-spacing: 2px;">মিশন আনলক করতে আপডেট কিনুন</p>
     </div>
     """, unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 1.8, 1])
     
     with col2:
-        # এআই রোবটের ছবি এবং পেমেন্ট গেটওয়ে
-        col_img, col_pay = st.columns([1, 3])
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        st.markdown("<h3 style='color: white; margin-bottom: 10px;'>💳 পেমেন্ট গেটওয়ে</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 18px; margin-bottom: 5px;'>বিকাশ ও নগদ (পার্সোনাল):</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: #ff3c00; font-size: 45px; letter-spacing: 2px;'>01967840830</h1>", unsafe_allow_html=True)
+        st.markdown("---")
         
-        with col_img:
-            # এআই রোবটের ছবি (স্ট্যাটিক)
-            st.markdown("""
-            <div style="animation: robot-float 4s infinite ease-in-out;">
-                <img src="https://i.ibb.co/N2L4b3P/robot.png" width="100%">
-            </div>
-            """, unsafe_allow_html=True)
-            
-        with col_pay:
-            # পেমেন্ট কার্ড (সবচেয়ে সুন্দর অংশ)
-            st.markdown('<div class="solar-glass-box">', unsafe_allow_html=True)
-            st.markdown("<h3 style='color: #ffcc00; text-shadow: 0 0 10px #ffcc00;'>💳 পেমেন্ট গেটওয়ে</h3>", unsafe_allow_html=True)
-            st.markdown("<h1 style='color: #ffffff; font-size: 40px; text-shadow: 0 0 10px #ff3c00; margin-bottom: 5px;'>01967840830</h1>", unsafe_allow_html=True)
-            st.write("বিকাশ বা নগদ (পার্সোনাল)")
-            
-            st.markdown("---")
-            st.write("আপনার আপডেট অ্যামাউন্ট নির্বাচন করুন:")
-            amount = st.slider("", 3000, 10000, 5000, step=500)
-            st.markdown(f'<p class="amount-display">৳ {amount}</p>', unsafe_allow_html=True)
-            
-            with st.form("space_activation"):
-                u_name = st.text_input("Candidate Name", placeholder="আপনার নাম")
-                u_trxid = st.text_input("TrxID / Master Key", type="password", placeholder="পেমেন্ট আইডি")
-                
-                if st.form_submit_button("ভেরিফাই এবং সার্ভারে প্রবেশ করুন 🛸"):
-                    if u_trxid == "akash-bypass-71":
-                        st.session_state.authenticated = True
-                        st.session_state.user_name = u_name if u_name else "Akash"
-                        speak_text(f"স্বাগতম {st.session_state.user_name}. পৃথিবী সার্ভারে আপনার সংযোগ সফল।")
-                        st.rerun()
-                    elif len(u_trxid) >= 8:
-                        st.session_state.authenticated = True
-                        st.session_state.user_name = u_name
-                        speak_text(f"পেমেন্ট সফল। {u_name}, আকাশ নাসা সার্ভার এখন আপনার নিয়ন্ত্রণে।")
-                        st.rerun()
-                    else:
-                        st.error("ভুল TrxID! দয়া করে সঠিক আইডি দিন।")
-            st.markdown('</div>', unsafe_allow_html=True)
+        # কাস্টম পেমেন্ট স্লাইডার
+        st.write("আপনার আপডেট অ্যামাউন্ট নির্বাচন করুন:")
+        amount = st.slider("", 3000, 10000, 5000, step=500)
+        st.markdown(f'<p class="price-tag">৳ {amount}</p>', unsafe_allow_html=True)
+        
+        with st.form("activation_form"):
+            u_name = st.text_input("Candidate Name", placeholder="আপনার নাম")
+            u_trxid = st.text_input("TrxID / Master Key", type="password", placeholder="পেমেন্ট আইডি")
+            if st.form_submit_button("ভেরিফাই এবং সার্ভার কানেক্ট করুন 🚀"):
+                # মাস্টার কি চেক
+                if u_trxid == "akash-bypass-71":
+                    st.session_state.authenticated = True
+                    st.session_state.user_name = u_name if u_name else "Akash"
+                    speak_text(f"স্বাগতম {st.session_state.user_name}. আকাশ নাসা সার্ভার আনলক করা হয়েছে.")
+                    st.rerun()
+                elif len(u_trxid) >= 8:
+                    st.session_state.authenticated = True
+                    st.session_state.user_name = u_name if u_name else "User"
+                    speak_text(f"ধন্যবাদ {st.session_state.user_name}. পেমেন্ট সফল হয়েছে.")
+                    st.rerun()
+                else:
+                    st.error("ভুল TrxID! দয়া করে সঠিক পেমেন্ট নিশ্চিত করুন।")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# ৫. মেইন স্পেস ড্যাশবোর্ড
+# ৫. মেইন কমান্ড সেন্টার (লগইন করার পর)
 else:
+    # ড্যাশবোর্ডের মাঝখানেও লোগো থাকবে
     st.markdown("""
-    <div style="text-align: center; margin-top: -30px;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="100" style="margin-bottom: 10px;">
+    <div class="header-container" style="margin-top: -30px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" class="nasa-logo" width="100">
         <h1 class="main-title">AKASH NASA AI SERVER</h1>
+        <p style="text-align: center; color: #00f2ff;">MISSION COMMAND CENTER</p>
     </div>
     """, unsafe_allow_html=True)
     
-    tabs = st.tabs(["💬 Galaxy AI Chat", "🛰️ Satellite Control", "📊 Live Stats", "🔐 Logout"])
+    tab1, tab2, tab3 = st.tabs(["💬 AI Voice Assistant", "📡 App Automation", "🔐 Logout"])
 
-    with tabs[0]:
-        st.subheader(f"🚀 মিশন কমান্ড: {st.session_state.user_name}")
-        u_input = st.chat_input("মহাকাশ কমান্ড দিন...")
-        if u_input:
-            st.session_state.chat_history.append({"role": "user", "content": u_input})
-            reply = f"ঠিক আছে {st.session_state.user_name}, পৃথিবী সার্ভার আপনার ডেটা প্রসেস করছে।"
+    with tab1:
+        st.subheader(f"🤖 হ্যালো {st.session_state.user_name}, বলুন কী কাজ করতে হবে?")
+        user_input = st.chat_input("সিস্টেমকে কমান্ড দিন...")
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            reply = f"ঠিক আছে {st.session_state.user_name}, আকাশ নাসা সার্ভার কাজটি সম্পন্ন করছে।"
             st.session_state.chat_history.append({"role": "assistant", "content": reply})
             speak_text(reply)
-        
+
         for chat in st.session_state.chat_history:
             with st.chat_message(chat["role"]):
                 st.write(chat["content"])
 
-    with tabs[1]:
-        col_x, col_y = st.columns(2)
-        with col_x:
-            if st.button("Activate Messenger Bot"):
-                st.success("Bot Connected via Satellite")
-                speak_text("মেসেঞ্জার অটোমেশন এখন মহাকাশ লিঙ্কে সক্রিয়।")
-        with col_y:
-            if st.button("Sync Global API"):
-                st.info("Syncing with Global Server")
-                speak_text("গ্লোবাল ডাটা সিঙ্ক হচ্ছে।")
+    with tab2:
+        st.subheader("📲 অ্যাপ অটোমেশন")
+        col_a, col_b = st.columns(2)
+        with col_a:
+            if st.button("Messenger Bot Active"):
+                st.success("Messenger Online")
+                speak_text("মেসেঞ্জার অটোমেশন একটিভ হয়েছে।")
+        with col_b:
+            if st.button("WhatsApp API Sync"):
+                st.info("WhatsApp Syncing")
+                speak_text("হোয়াটসঅ্যাপ সিঙ্ক সম্পন্ন হয়েছে।")
 
-    with tabs[2]:
-        st.subheader("📡 সার্ভার স্ট্যাটাস")
-        st.write("কানেকশন: আল্ট্রা স্টেবল")
-        st.progress(100)
-
-    with tabs[3]:
-        if st.button("Logout From Orbit"):
+    with tab3:
+        if st.button("Logout From Server"):
             st.session_state.authenticated = False
             st.rerun()
 
-st.markdown("<p style='text-align: center; color: #444;'>Deep Space Engine v7.0 | Developed by Akash</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #444;'>Developer: Akash | AKASH NASA AI SERVER v5.0 Master Update</p>", unsafe_allow_html=True)
