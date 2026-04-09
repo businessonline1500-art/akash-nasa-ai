@@ -1,18 +1,19 @@
 import streamlit as st
 import time
 
-# ১. পেজ সেটআপ (AKASH NASA AI SERVER PRO v6.0)
-st.set_page_config(page_title="AKASH NASA AI SERVER | SOLAR", page_icon="☀️", layout="wide")
+# ১. পেজ সেটআপ (AKASH NASA AI SERVER PRO v7.0)
+st.set_page_config(page_title="AKASH NASA AI SERVER | EARTH", page_icon="🌎", layout="wide")
 
-# ২. মহাকাশ ও সৌর ডিজাইন (Deep Space & Solar Nebula Color)
+# ২. পৃথিবী ও মহাকাশ ডিজাইন (Deep Space & Earth Background)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
     
-    /* মহাকাশের ব্যাকগ্রাউন্ড */
+    /* মহাকাশ ও পৃথিবীর ব্যাকগ্রাউন্ড */
     .stApp { 
-        background: radial-gradient(circle at center, #001220 0%, #000000 100%), 
-                    url('https://www.transparenttextures.com/patterns/black-linen.png') !important; 
+        background: radial-gradient(circle at center, rgba(0, 18, 32, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%), 
+                    url('https://i.ibb.co/L95v1r0/earth-from-space.jpg') no-repeat center center fixed !important; 
+        background-size: cover !important;
         color: #ffffff;
     }
     
@@ -36,8 +37,8 @@ st.markdown("""
     
     /* পেমেন্ট গ্লাস কার্ড (সবচেয়ে সুন্দর অংশ) */
     .solar-glass-box { 
-        background: rgba(255, 255, 255, 0.02); 
-        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(25px);
         padding: 40px; 
         border-radius: 30px; 
         border: 2px solid rgba(255, 60, 0, 0.4); 
@@ -86,14 +87,14 @@ if 'authenticated' not in st.session_state: st.session_state.authenticated = Fal
 if 'chat_history' not in st.session_state: st.session_state.chat_history = []
 if 'user_name' not in st.session_state: st.session_state.user_name = ""
 
-# ৪. মহাকাশ ও সৌর পেমেন্ট গেটওয়ে
+# ৪. পৃথিবী ও নাসার লোগো পেমেন্ট গেটওয়ে
 if not st.session_state.authenticated:
-    # সৌর টাইটেল ও লোগো
+    # নাসার লোগো এবং টাইটেল
     st.markdown("""
     <div style="text-align: center; margin-top: -30px;">
-        <h1 style="color: #ff8000; font-family: 'Orbitron', sans-serif; font-size: 30px; text-shadow: 0 0 10px #ff8000; margin-bottom: 5px;">☀️ SOLAR SYSTEM ☀️</h1>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="150" style="margin-bottom: 10px;">
         <h1 class="main-title">AKASH NASA AI SERVER</h1>
-        <p style="color: #ffcc00; font-size: 20px; letter-spacing: 5px;">EXPEDITION v6.0 POWER</p>
+        <p style="color: #ffcc00; font-size: 20px; letter-spacing: 5px;">EXPEDITION v7.0 POWER</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -131,7 +132,7 @@ if not st.session_state.authenticated:
                     if u_trxid == "akash-bypass-71":
                         st.session_state.authenticated = True
                         st.session_state.user_name = u_name if u_name else "Akash"
-                        speak_text(f"স্বাগতম {st.session_state.user_name}. মহাকাশ সার্ভারে আপনার সংযোগ সফল।")
+                        speak_text(f"স্বাগতম {st.session_state.user_name}. পৃথিবী সার্ভারে আপনার সংযোগ সফল।")
                         st.rerun()
                     elif len(u_trxid) >= 8:
                         st.session_state.authenticated = True
@@ -146,7 +147,7 @@ if not st.session_state.authenticated:
 else:
     st.markdown("""
     <div style="text-align: center; margin-top: -30px;">
-        <h1 style="color: #ff8000; font-family: 'Orbitron', sans-serif; font-size: 30px; text-shadow: 0 0 10px #ff8000; margin-bottom: 5px;">☀️ SOLAR SYSTEM COMMAND ☀️</h1>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="100" style="margin-bottom: 10px;">
         <h1 class="main-title">AKASH NASA AI SERVER</h1>
     </div>
     """, unsafe_allow_html=True)
@@ -158,7 +159,7 @@ else:
         u_input = st.chat_input("মহাকাশ কমান্ড দিন...")
         if u_input:
             st.session_state.chat_history.append({"role": "user", "content": u_input})
-            reply = f"ঠিক আছে {st.session_state.user_name}, মহাকাশ সার্ভার আপনার ডেটা প্রসেস করছে।"
+            reply = f"ঠিক আছে {st.session_state.user_name}, পৃথিবী সার্ভার আপনার ডেটা প্রসেস করছে।"
             st.session_state.chat_history.append({"role": "assistant", "content": reply})
             speak_text(reply)
         
@@ -187,4 +188,4 @@ else:
             st.session_state.authenticated = False
             st.rerun()
 
-st.markdown("<p style='text-align: center; color: #444;'>Deep Space Engine v6.0 | Developed by Akash</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #444;'>Deep Space Engine v7.0 | Developed by Akash</p>", unsafe_allow_html=True)
