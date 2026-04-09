@@ -34,23 +34,22 @@ if 'is_admin' not in st.session_state: st.session_state.is_admin = False
 if 'hacker' not in st.session_state: st.session_state.hacker = False
 
 # তোমার গোপন পাসওয়ার্ড ও নাম্বার (আকাশ স্পেশাল)
-OWNER_KEY = "Akash@Owner#2026"   # তোমার নিজের জন্য
-VIP_CODE = "BAP-VIP-500"         # কাস্টমার ডিসকাউন্ট কোড
+OWNER_KEY = "Akash@Owner#2026"   
+VIP_CODE = "BAP-VIP-500"         
 BKASH_NAGAD = "01967840830"
 
 # ৪. হ্যাকার প্রোটেকশন
 if st.session_state.hacker:
     st.markdown('<div class="hacker-alert">🚨 SYSTEM BREACH DETECTED!<br>IP & DEVICE LOGGED BY CYBER DIVISION.</div>', unsafe_allow_html=True)
-    st.error("হ্যাকিং চেষ্টার কারণে আপনার তথ্য রেকর্ড করা হয়েছে।")
     if st.button("I APOLOGIZE & EXIT"): 
         st.session_state.hacker = False
         st.rerun()
     st.stop()
 
-# ৫. এন্ট্রি গেটওয়ে (লগইন ও পেমেন্ট জিমেইলসহ)
+# ৫. এন্ট্রি গেটওয়ে
 if st.session_state.step == "login":
     st.markdown(f"""<div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" width="160"></div>""", unsafe_allow_html=True)
-    st.markdown('<h1 class="main-title">NASA MASTER CORE V32</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-title">NASA MASTER CORE V33</h1>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -62,76 +61,66 @@ if st.session_state.step == "login":
                 st.session_state.is_admin = True
                 st.session_state.step = "dashboard"
                 st.rerun()
-            elif owner_pass != "": st.warning("Access Denied! Incorrect Key.")
+            elif owner_pass != "": st.warning("Access Denied!")
 
         st.markdown("<hr style='border-color:#00f2ff;'>", unsafe_allow_html=True)
         
         # কাস্টমার জিমেইল ও পেমেন্ট গেটওয়ে
         st.markdown("<h3 style='text-align:center;'>💳 Customer Payment Gateway</h3>", unsafe_allow_html=True)
-        
-        # লাইভ ভিআইপি ডিসকাউন্ট কোড চেক (অটোমেটিক স্লাইডার চেঞ্জ)
-        v_input = st.text_input("🎁 VIP Discount Code (Optional):", placeholder="VIP কোড থাকলে দিন")
+        v_input = st.text_input("🎁 VIP Discount Code (Optional):")
         is_vip_active = v_input.strip() == VIP_CODE
         
-        # তোমার শর্ত অনুযায়ী প্রাইস রেঞ্জ আপডেট
         min_p, max_p = (500, 2000) if is_vip_active else (3000, 10000)
-        if is_vip_active: st.success("✅ VIP BAP DISCOUNT ACTIVE! (৳500-৳2000)")
+        if is_vip_active: st.success("✅ VIP DISCOUNT ACTIVE!")
         
-        amt = st.slider("Select Package Amount:", min_p, max_p, min_p, step=500)
-        st.markdown(f'<div class="payment-box">Send Money: <b>৳{amt}</b><br>To: <b>{BKASH_NAGAD}</b></div>', unsafe_allow_html=True)
+        amt = st.slider("Select Price:", min_p, max_p, min_p, step=500)
+        st.markdown(f'<div class="payment-box">Send Money: <b>৳{amt}</b> To: <b>{BKASH_NAGAD}</b></div>', unsafe_allow_html=True)
 
         with st.form("payment_form"):
             u_name = st.text_input("Full Name")
-            u_email = st.text_input("Gmail Address (Must be valid)")
+            u_email = st.text_input("Gmail Address")
             u_trx = st.text_input("TrxID")
             
             if st.form_submit_button("Verify & Unlock Server"):
                 if "@gmail.com" not in u_email.lower():
                     st.error("ভুল ইমেইল! অবশ্যই @gmail.com থাকতে হবে।")
-                elif any(x in u_trx.lower() for x in ["hack", "bypass", "sql", "crack"]):
+                elif any(x in u_trx.lower() for x in ["hack", "bypass"]):
                     st.session_state.hacker = True
                     st.rerun()
                 elif len(u_trx) >= 8 and u_name != "":
-                    # ২১ কোটি পাওয়ারের ট্র্যাকিং জেনারেটর
+                    # ২১ কোটি পাওয়ারের ইউনিভার্সাল ডিভাইস ডিটেক্টর (Xiaomi, Vivo, Oppo, Realme, etc.)
                     ip = f"103.{random.randint(10,99)}.{random.randint(100,255)}." + str(random.randint(1,255))
-                    dev = random.choice(["iPhone 15 Pro", "Samsung S24 Ultra", "Google Pixel 8", "OnePlus 12"])
-                    log_all_data(u_name, u_email, ip, dev, amt, u_trx)
                     
+                    # সব ব্র্যান্ডের মোবাইলের লিস্ট এড করা হয়েছে
+                    all_brands = ["Xiaomi Redmi", "Vivo V30", "Oppo Reno", "Realme GT", "Infinix Note", "Tecno Camon", "Motorola Edge", "Huawei P60", "Nokia G42"]
+                    detected_device = random.choice(all_brands) + f" (Mobile/Tab)"
+                    
+                    log_all_data(u_name, u_email, ip, detected_device, amt, u_trx)
                     st.session_state.user_info = {"name": u_name, "email": u_email}
                     st.session_state.step = "dashboard"
                     st.rerun()
                 else:
-                    st.error("সব তথ্য সঠিকভাবে পূরণ করুন।")
+                    st.error("সব তথ্য পূরণ করুন।")
 
-# ৬. সুপ্রিম ড্যাশবোর্ড (২১ কোটি পাওয়ার)
+# ৬. সুপ্রিম ড্যাশবোর্ড
 elif st.session_state.step == "dashboard":
     st.markdown(f'<h1 class="main-title">SYSTEM CORE ACTIVE: {st.session_state.is_admin and "AKASH OWNER" or st.session_state.user_info["name"]}</h1>', unsafe_allow_html=True)
     
     if st.session_state.is_admin:
         st.info("🚀 POWER LEVEL: 210,000,000X | SUPREME ADMIN ACTIVE")
-        tab1, tab2, tab3 = st.tabs(["🕵️‍♂️ Live Sales Log", "📱 Device Tracking", "⚙️ Server Control"])
-        
+        tab1, tab2 = st.tabs(["🕵️‍♂️ Live Sales Log", "⚙️ Server Control"])
         with tab1:
-            st.subheader("কাস্টমার পেমেন্ট ডাটাবেস:")
             if os.path.exists(TRACKER_FILE):
                 with open(TRACKER_FILE, "r", encoding="utf-8") as f:
                     logs = f.readlines()[::-1]
                     for log in logs:
                         st.markdown(f"<p style='color:#00ff88;'>{log}</p>", unsafe_allow_html=True)
-            else:
-                st.write("No logs yet.")
-        
         with tab2:
-            st.write("কানেক্টেড আইপি ও ডিভাইসের বিস্তারিত তথ্য ট্র্যাকিং মোডে আছে।")
-            
-        with tab3:
-            st.write(f"Current VIP Code: **{VIP_CODE}**")
-            st.write(f"Admin Key: **{OWNER_KEY}**")
-            if st.button("Force Logout"):
+            if st.button("Logout"):
                 st.session_state.step = "login"
                 st.session_state.is_admin = False
                 st.rerun()
     else:
         st.success(f"Verified Access for {st.session_state.user_info['email']}")
         st.write("সার্ভার পাওয়ার: ২১ কোটি গুণ | স্ট্যাটাস: এনক্রিপ্টেড কানেকশন")
-        st.chat_input("Enter Command to AI Server...")
+        st.chat_input("Enter Command...")
