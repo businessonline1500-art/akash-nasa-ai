@@ -113,4 +113,8 @@ with tab2:
 
 # --- FOOTER ---
 st.markdown("---")
-st.caption("Powered by Akash NASA AI Master Core © 2026")
+st.caption("Powered by Akash NASA AI Master Core © 2026")elif access_code != "":
+        st.error("❌ হ্যাকিং সনাক্ত করা হয়েছে!")
+        st.warning("আপনার IP এবং লোকেশন নাসা সিকিউরিটি সার্ভারে পাঠানো হচ্ছে...")
+        st.markdown("### ⚠️ SYSTEM BREACH DETECTED: TRACING IN PROGRESS...")
+        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGJqNmU5b3h6eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JnBvPXYmY3Q9Zw/V4NSRTs3h9XfG/giphy.gif")
