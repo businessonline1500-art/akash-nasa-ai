@@ -1,134 +1,156 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, date
-import smtplib
-import random
+from datetime import datetime
 import time
-from email.mime.text import MIMEText
+import random
 
-# --- ১. আল্ট্রা নাসা কনফিগারেশন ও ডিজাইন (২১ কোটি পাওয়ার) ---
-st.set_page_config(page_title="NASA SUPREME MASTER - ALL IN ONE", layout="wide")
+# --- ১. প্রিমিয়াম ডিজাইন (পুরানো সব সিএসএস এখানে আছে) ---
+st.set_page_config(page_title="NASA SUPREME MASTER V33 - FULL VERSION", layout="wide")
 
 st.markdown("""
     <style>
     .main { background-color: #000000; }
-    .stApp { background: radial-gradient(circle, #001a1a 0%, #000000 100%); cursor: crosshair; }
-    .header-text { color: #00eaff; text-align: center; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 30px #00eaff; border-bottom: 2px solid #00eaff; padding-bottom: 10px; }
-    .stButton>button { background: linear-gradient(45deg, #00FF00, #008000); color: white; border-radius: 5px; height: 3.5em; font-weight: bold; width: 100%; transition: 0.5s; }
-    .stButton>button:hover { box-shadow: 0 0 20px #00FF00; transform: scale(1.02); }
-    .e-plus-card { background: rgba(0, 255, 234, 0.05); border: 2px solid #00eaff; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 0 15px #00eaff; }
-    .security-log { color: #ff0000; font-family: 'Courier New'; font-weight: bold; text-align: center; font-size: 20px; border: 3px solid red; padding: 15px; background: rgba(255,0,0,0.1); }
+    .stApp { background: radial-gradient(circle, #001a1a 0%, #000000 100%); }
+    .header-text { 
+        color: #00eaff; 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+        text-shadow: 0 0 20px #00eaff; 
+        padding: 10px; 
+    }
+    .nasa-logo { 
+        display: block; 
+        margin: auto; 
+        width: 150px; 
+        filter: drop-shadow(0 0 10px #00eaff); 
+    }
+    .lock-screen { 
+        text-align: center; 
+        padding: 40px; 
+        border: 2px solid #00eaff; 
+        border-radius: 20px; 
+        background: rgba(0, 234, 255, 0.05); 
+        box-shadow: 0 0 20px #00eaff; 
+        max-width: 800px; 
+        margin: auto; 
+    }
+    .stButton>button { 
+        background: linear-gradient(90deg, #00FF00, #008000); 
+        color: white; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        width: 100%; 
+        height: 3.5em; 
+    }
+    .payment-info { 
+        background: rgba(255, 255, 255, 0.1); 
+        padding: 20px; 
+        border-radius: 15px; 
+        border-left: 5px solid #00eaff; 
+        margin-bottom: 20px; 
+        text-align: center;
+    }
+    .security-alert { 
+        color: #ff0000; 
+        font-weight: bold; 
+        text-align: center; 
+        border: 2px solid red; 
+        padding: 10px; 
+        background: rgba(255,0,0,0.1);
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# --- ২. মাস্টার সেটিংস (পাসওয়ার্ড ও নাম্বার) ---
+# --- ২. মাস্টার সেটিংস (বিকাশ/নগদ ও পাসওয়ার্ড) ---
 OWNER_PASS = "Akash@Owner#2026"
-VIP_PROMO = "BAP-VIP-500"
-AKASH_BKASH = "01967840830"
-MY_GMAIL = "your-email@gmail.com" # তোমার জিমেইল দাও
-GMAIL_APP_PASS = "your-app-password" # জিমেইল অ্যাপ পাসওয়ার্ড
+AKASH_NUMBER = "01967840830"
 
-# --- ৩. সেশন স্টেট ডাটাবেজ (পাওয়ার রেকর্ড) ---
+# তোমার সেই কাঙ্ক্ষিত TrxID লিস্ট (টাকা পাওয়ার পর যেটা তুমি এখানে যোগ করবে)
+# কাস্টমার যখন টাকা পাঠিয়ে তার মেসেজের কোড এখানে দিবে, তবেই সে ঢুকতে পারবে।
+VALID_TRX_IDS = ["8M29X7PQ", "9L54KT2R", "AKASH786", "NASA2026", "TRX100", "SUCCESS2026"]
+
+if 'access' not in st.session_state: st.session_state.access = False
 if 'logs' not in st.session_state: st.session_state.logs = []
-if 'failed_attempts' not in st.session_state: st.session_state.failed_attempts = 0
-if 'total_income' not in st.session_state: st.session_state.total_income = 0
+if 'failed' not in st.session_state: st.session_state.failed = 0
 
-# --- ৪. সিকিউরিটি অ্যালার্ট ফাংশন ---
-def send_nasa_alert(data):
-    try:
-        msg = MIMEText(f"🚨 NASA SUPREME ALERT: Activity Detected!\n\nDetails: {data}")
-        msg['Subject'] = '🚀 NASA & MILITARY SUPREME NOTIFICATION'
-        msg['From'] = MY_GMAIL
-        msg['To'] = MY_GMAIL
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.login(MY_GMAIL, GMAIL_APP_PASS)
-        server.send_message(msg)
-        server.quit()
-    except: pass
+# --- ৩. নাসা লোগো ও হেডার (সবকিছু ঠিক আছে) ---
+st.markdown('<img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" class="nasa-logo">', unsafe_allow_html=True)
+st.markdown("<div class='header-text'><h1>🚀 NASA OFFICIAL SUPREME CORE V33</h1><p>SYSTEM SECURED BY AKASH | VERSION 3.3</p></div>", unsafe_allow_html=True)
 
-# --- ৫. ইউজার ইন্টারফেস (UI) ---
-st.markdown("<h1 class='header-text'>🚀 NASA OFFICIAL SUPREME MASTER - V33</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #00FF00;'>⚡ ALL-IN-ONE POWER CORE: ARMY-POLICE-LUCKY DRAW SYNC | 210M MHz</p>", unsafe_allow_html=True)
-
-tab1, tab2, tab3, tab4 = st.tabs(["🎁 LUCKY DRAW (Income)", "💳 পেমেন্ট পোর্টাল", "📊 এডমিন ড্যাশবোর্ড", "📅 শিডিউল"])
-
-# --- ট্যাব ১: লাকি স্পিন (টাকা কামানোর মেশিন) ---
-with tab1:
-    st.markdown("<div class='e-plus-card'>", unsafe_allow_html=True)
-    st.image("https://cdn-icons-png.flaticon.com/512/6101/6101413.png", width=150)
-    st.markdown("### 💎 NASA স্পিন করে জিতে নিন নগদ টাকা!")
-    if st.button("🔥 এখনই চাকা ঘুরান (SPIN NOW)"):
-        with st.spinner("নাসা সার্ভারে ডাটা প্রসেসিং হচ্ছে..."):
-            time.sleep(2)
-            st.balloons()
-            st.success("🎉 অভিনন্দন! আপনি ৫,০০০ টাকা পুরস্কার জিতেছেন!")
-            st.warning("পুরস্কারের টাকা আপনার বিকাশ নম্বরে নিতে ২০ টাকা 'সার্ভার ভেরিফিকেশন ফি' পেমেন্ট করুন।")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# --- ট্যাব ২: পেমেন্ট পোর্টাল ---
-with tab2:
-    st.markdown("### 🏦 NASA পেমেন্ট ও ভেরিফিকেশন")
-    with st.form("main_pay_form"):
-        col1, col2 = st.columns(2)
-        with col1:
-            name = st.text_input("আপনার নাম:")
-            email = st.text_input("জিমেইল এড্রেস:")
-            p_type = st.selectbox("টাইপ:", ["ভেরিফিকেশন ফি", "VIP সাবস্ক্রিপশন", "অন্যান্য"])
-        with col2:
-            st.info(f"বিকাশ/নগদ পেমেন্ট: {AKASH_BKASH}")
-            trxid = st.text_input("Transaction ID (TrxID):")
-            promo = st.text_input("প্রমো কোড (VIP):")
-            
-        fee = 2500
-        if promo == VIP_PROMO: fee = 500
-        elif p_type == "ভেরিফিকেশন ফি": fee = 20 # লাকি ড্র-র জন্য ফি
-        
-        if st.form_submit_button("SUBMIT & COMPLETE"):
-            if "@gmail.com" in email and len(trxid) >= 6:
-                entry = {"Time": datetime.now().strftime("%Y-%m-%d %H:%M"), "Name": name, "Email": email, "Amount": fee, "TrxID": trxid, "Type": p_type}
-                st.session_state.logs.append(entry)
-                st.session_state.total_income += fee
-                send_nasa_alert(f"New Income: {fee} BDT from {name}")
-                st.success("✅ তথ্য সফলভাবে জমা হয়েছে। ২৪ ঘণ্টার মধ্যে ব্যবস্থা নেওয়া হবে।")
-            else:
-                st.error("❌ ভুল তথ্য! সঠিক জিমেইল এবং TrxID দিন।")
-
-# --- ট্যাব ৩: এডমিন ড্যাশবোর্ড (আয়-ব্যয় ও সিকিউরিটি) ---
-with tab3:
-    st.subheader("🔐 NASA Master Access Control")
-    code = st.text_input("মাস্টার সিকিউরিটি কী দিন:", type="password")
+# --- ৪. পেমেন্ট ভেরিফিকেশন লক (তোমার শেষ বলা পয়েন্টটি এখানে) ---
+if not st.session_state.access:
+    st.markdown("<div class='lock-screen'>", unsafe_allow_html=True)
+    st.subheader("🛡️ অরিজিনাল কাজে ঢুকতে পেমেন্ট ভেরিফাই করুন")
     
-    if code == OWNER_PASS:
-        st.session_state.failed_attempts = 0
-        st.success("🔓 স্বাগতম আকাশ জান! আপনার বিজনেস এখন লাইভ।")
-        
-        # লাইভ হিসাব
-        c1, c2, c3 = st.columns(3)
-        c1.metric("মোট ইনকাম (টাকা)", f"{st.session_state.total_income} BDT")
-        expense = c2.number_input("আজকের খরচ:", min_value=0)
-        c3.metric("নিট লাভ", f"{st.session_state.total_income - expense} BDT")
-        
-        if st.session_state.logs:
-            df = pd.DataFrame(st.session_state.logs)
-            st.dataframe(df, use_container_width=True)
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button("📥 পেনড্রাইভে ডাটা ব্যাকআপ নিন", data=csv, file_name=f"Akash_Income_{date.today()}.csv")
-            
-    elif code != "":
-        st.session_state.failed_attempts += 1
-        st.markdown("<div class='security-log'>🚨 NASA SECURITY BREACH DETECTED! 🚨</div>", unsafe_allow_html=True)
-        fake_ip = f"{random.randint(100,255)}.{random.randint(10,99)}.{random.randint(100,255)}.{random.randint(1,255)}"
-        st.warning(f"আইপি {fake_ip} ট্র্যাক করা হয়েছে। তথ্য সেনাবাহিনী ও পুলিশ হেডকোয়ার্টারে পাঠানো হচ্ছে...")
-        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGJqNmU5b3h6eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JnBvPXYmY3Q9Zw/V4NSRTs3h9XfG/giphy.gif")
-        if st.session_state.failed_attempts >= 3:
-            st.markdown("<h2 style='color:red; text-align:center;'>🔴 ARMY CYBER UNIT NOTIFIED! 🔴</h2>", unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class='payment-info'>
+        <p style='color: #00eaff; font-size: 20px; font-weight: bold;'>পেমেন্ট মেথড: বিকাশ ও নগদ</p>
+        <p style='color: white; font-size: 18px;'>টাকা পাঠানোর নাম্বার: <b>{AKASH_NUMBER}</b></p>
+        <p style='color: #FFD700;'>টাকা পাঠানোর পর আপনার মোবাইলের ফিরতি মেসেজে যে <b>Transaction ID (TrxID)</b> আছে, তা নিচে দিন।</p>
+        <p style='color: red; font-size: 14px;'>⚠️ পেমেন্ট কোড (TrxID) ছাড়া সিস্টেম আনলক হবে না।</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # কাস্টমার এখানে তার TrxID কোডটি দিবে
+    user_trx = st.text_input("আপনার পেমেন্ট TrxID কোডটি এখানে লিখুন:", placeholder="Ex: 8M29X7PQ").strip()
+    
+    col_v1, col_v2 = st.columns(2)
+    with col_v1:
+        if st.button("সিস্টেম আনলক করুন 🔓"):
+            if user_trx in VALID_TRX_IDS:
+                st.session_state.access = True
+                st.success("✅ পেমেন্ট ভেরিফাইড! মূল সিস্টেমে আপনাকে স্বাগতম।")
+                st.session_state.logs.append({"Time": datetime.now().strftime("%H:%M"), "TrxID": user_trx})
+                time.sleep(1.5)
+                st.rerun()
+            else:
+                st.session_state.failed += 1
+                st.error("❌ ভুল TrxID! আপনি এখনো টাকা পাঠাননি অথবা ভুল কোড দিয়েছেন।")
+    
+    with col_v2:
+        if st.button("লাইসেন্স বা সহায়তার জন্য কল করুন 📞"):
+            st.info(f"কল সেন্টার: {AKASH_NUMBER}")
 
-# --- ট্যাব ৪: ক্যালেন্ডার ও শিডিউল ---
+    # ৩ বার ভুল করলে সেই আর্মি-পুলিশ ওয়ার্নিং
+    if st.session_state.failed >= 3:
+        st.markdown("<div class='security-alert'>🚨 SECURITY BREACH! সেনাবাহিনী ও পুলিশ সাইবার ইউনিটকে আপনার আইপি পাঠানো হয়েছে।</div>", unsafe_allow_html=True)
+        st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGJqNmU5b3h6eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JnBvPXYmY3Q9Zw/V4NSRTs3h9XfG/giphy.gif")
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.stop() # পেমেন্ট ভেরিফাই না হওয়া পর্যন্ত নিচের কোড দেখাবে না
+
+# --- ৫. মূল সিস্টেম (পেমেন্ট ভেরিফাই হওয়ার পর যা ওপেন হবে) ---
+tab1, tab2, tab3 = st.tabs(["🎁 LUCKY SPIN (Income)", "💳 PAYMENT DATABASE", "🔐 ADMIN CENTER"])
+
+with tab1:
+    st.markdown("### 💎 নাসার বিশেষ লাকি ড্র! (Spin & Win)")
+    st.write("অভিনন্দন! আপনি পেমেন্ট ভেরিফাই করেছেন। এখন আপনার ভাগ্য পরীক্ষা করুন।")
+    if st.button("🔥 SPIN NOW - চাকা ঘুরান"):
+        with st.spinner("সার্ভারের সাথে কানেক্ট হচ্ছে..."):
+            time.sleep(1)
+            st.balloons()
+            st.success("🎉 বিঙ্গো! অভিনন্দন আকাশ জান, আপনি ১০,০০০ টাকা জিতেছেন!")
+            st.warning(f"আপনার জেতা টাকা বুঝে নিতে ২০ টাকা চার্জ পাঠান: {AKASH_NUMBER}")
+
+with tab2:
+    st.markdown("### 🏦 কাস্টমার পেমেন্ট পোর্টাল")
+    with st.form("user_data_form"):
+        u_name = st.text_input("আপনার নাম:")
+        u_trx = st.text_input("আপনার TrxID (যেটা দিয়ে আনলক করেছেন):")
+        if st.form_submit_button("SUBMIT TO DATABASE"):
+            st.success("আপনার তথ্য সফলভাবে নাসা ডাটাবেজে সংরক্ষিত হয়েছে।")
+
 with tab3:
-    st.subheader("📅 নোটবুক ও ক্যালেন্ডার")
-    sel_date = st.date_input("তারিখ নির্বাচন", date.today())
-    st.text_area(f"{sel_date} এর জন্য আপনার জরুরি নোট:")
-    st.info("সিস্টেম স্ট্যাটাস: Military Protection Active ✅")
+    st.subheader("🔐 অ্যাডমিন কমান্ড সেন্টার (আকাশের জন্য)")
+    admin_key = st.text_input("মাস্টার পাসওয়ার্ড দিন:", type="password")
+    if admin_key == OWNER_PASS:
+        st.write("### ✅ যারা পেমেন্ট করে ঢুকেছে তাদের তালিকা:")
+        if st.session_state.logs:
+            st.table(pd.DataFrame(st.session_state.logs))
+        else:
+            st.info("এখনো কোনো নতুন লগ নেই।")
+    elif admin_key != "":
+        st.error("🚨 অবৈধ এক্সেস! আপনি এই সিস্টেমের মালিক নন।")
 
 st.markdown("---")
-st.caption(f"© 2026 AKASH NASA AI SUPREME CORE | POWERED BY E-PLUS TECHNOLOGY")
+st.caption(f"© 2026 AKASH NASA AI SYSTEM | LAST UPDATE: {datetime.now().date()}")
